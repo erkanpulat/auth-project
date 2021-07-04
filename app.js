@@ -3,6 +3,8 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const exphbs = require("express-handlebars");
 const path = require("path");
+// routers
+const authRouter = require("./src/routers/auth_router");
 
 // db connection
 require("./src/config/db_connection");
@@ -28,6 +30,8 @@ app.set("views", path.resolve(__dirname, "./src/views"));
 app.get("/", (req, res, next) => {
   res.json({ message: "Welcome" });
 });
+
+app.use("/", authRouter);
 
 app.use((req, res, next) => {
   res.json({ message: "404 NOT FOUND!" });
