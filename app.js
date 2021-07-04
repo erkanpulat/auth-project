@@ -4,6 +4,9 @@ const dotenv = require("dotenv").config();
 const exphbs = require("express-handlebars");
 const path = require("path");
 
+// db connection
+require("./src/config/db_connection");
+
 // app
 const app = express();
 
