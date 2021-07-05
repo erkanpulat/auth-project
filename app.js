@@ -34,7 +34,7 @@ app.get("/", (req, res, next) => {
 app.use("/", authRouter);
 
 app.use((req, res, next) => {
-  res.json({ message: "404 NOT FOUND!" });
+  res.render("pages/404", { layout: "error_layout" });
 });
 
 // app start
