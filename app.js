@@ -3,6 +3,7 @@ const express = require("express");
 const dotenv = require("dotenv").config();
 const exphbs = require("express-handlebars");
 const path = require("path");
+const session = require("express-session");
 // routers
 const authRouter = require("./src/routers/auth_router");
 
@@ -26,9 +27,27 @@ app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname, "./src/views"));
 
+// session
+app.use(
+  session({
+    secret: process.env.SESSION_SECRET,
+    resave: false,
+    saveUninitialized: true,
+    cookie: {
+      maxAge: 1000 * 60 * 60 * 24,
+    },
+  })
+);
+
+let count = 0;
 // routes
 app.get("/", (req, res, next) => {
-  res.json({ message: "Welcome" });
+  if (req.session.count) {
+    req.session.count++;
+  } else {
+    req.session.count = 1;
+  }
+  res.json({ message: "Welcome", count: req.session.count });
 });
 
 app.use("/", authRouter);
