@@ -8,14 +8,18 @@ const getLoginPage = (req, res, next) => {
 
 // register
 const getRegisterPage = (req, res, next) => {
-  res.render("pages/register", { layout: "auth_layout" });
+  res.render("pages/register", { layout: "auth_layout" }); // the response is finished - flash messages disappeared
 };
 
 const register = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
-    console.log(errors);
-    res.redirect("/register");
+    // send validation errors and fields with flash messages
+    req.flash("validation_error", errors.array());
+    req.flash("firstName", req.body.firstName);
+    req.flash("lastName", req.body.lastName);
+    req.flash("email", req.body.email);
+    res.redirect("/register"); // the response is not finished
   } else {
     res.redirect("/login");
   }

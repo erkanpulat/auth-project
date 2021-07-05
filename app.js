@@ -4,6 +4,7 @@ const dotenv = require("dotenv").config();
 const exphbs = require("express-handlebars");
 const path = require("path");
 const session = require("express-session");
+const flash = require("connect-flash");
 // routers
 const authRouter = require("./src/routers/auth_router");
 
@@ -27,7 +28,7 @@ app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname, "./src/views"));
 
-// session
+// session middleware
 app.use(
   session({
     secret: process.env.SESSION_SECRET,
@@ -38,6 +39,18 @@ app.use(
     },
   })
 );
+
+// flash message middlewares
+app.use(flash());
+
+app.use((req, res, next) => {
+  // flash messages
+  res.locals.validation_error = req.flash("validation_error");
+  res.locals.firstName = req.flash("firstName");
+  res.locals.lastName = req.flash("lastName");
+  res.locals.email = req.flash("email");
+  next();
+});
 
 let count = 0;
 // routes
