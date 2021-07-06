@@ -1,10 +1,11 @@
 // packages
-const express = require("express");
 const dotenv = require("dotenv").config();
-const exphbs = require("express-handlebars");
 const path = require("path");
-const session = require("express-session");
+const express = require("express");
+const exphbs = require("express-handlebars");
 const flash = require("connect-flash");
+const session = require("express-session");
+const MongoDBStore = require("connect-mongodb-session")(session);
 // routers
 const authRouter = require("./src/routers/auth_router");
 
@@ -28,6 +29,12 @@ app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
 app.set("views", path.resolve(__dirname, "./src/views"));
 
+// session db conf
+const sessionStore = new MongoDBStore({
+  uri: `mongodb://${process.env.HOST}/${process.env.DB_NAME}`,
+  collection: "sessions",
+});
+
 // session middleware
 app.use(
   session({
@@ -35,8 +42,9 @@ app.use(
     resave: false,
     saveUninitialized: true,
     cookie: {
-      maxAge: 1000 * 60 * 60 * 24,
+      maxAge: 1000 * 60 * 60 * 24, // 1 day
     },
+    store: sessionStore,
   })
 );
 
@@ -45,6 +53,7 @@ app.use(flash());
 
 app.use((req, res, next) => {
   // flash messages
+  // res.locals, available only to the view(is) rendered during that request / response cycle (if any).
   res.locals.validation_error = req.flash("validation_error");
   res.locals.firstName = req.flash("firstName");
   res.locals.lastName = req.flash("lastName");
