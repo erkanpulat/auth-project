@@ -10,7 +10,7 @@
                             <h1 class="h4 text-gray-900 mb-4">Yeni Hesap Oluştur!</h1>
                         </div>
                         {{#if validation_error}}
-                        {{> _alert}}
+                        {{> _alert type="danger" messagesArray=validation_error}}
                         {{/if}}
                         <form class="user" method="POST" action="/register">
                             <div class="form-group row">

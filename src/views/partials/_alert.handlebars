@@ -1,4 +1,18 @@
-{{#each validation_error}}
+{{!-- success alert --}}
+{{#eq type "success"}}
+{{#each messagesArray}}
+<div class="alert alert-success alert-dismissible fade show" role="alert">
+    {{msg}}
+    <button type="button" class="close" data-dismiss="alert" aria-label="Close">
+        <span aria-hidden="true">&times;</span>
+    </button>
+</div>
+{{/each}}
+{{/eq}}
+
+{{!-- danger alert --}}
+{{#eq type "danger"}}
+{{#each messagesArray}}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
     {{msg}}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
@@ -6,3 +20,4 @@
     </button>
 </div>
 {{/each}}
+{{/eq}}

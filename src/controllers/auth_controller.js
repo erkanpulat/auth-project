@@ -11,7 +11,7 @@ const getRegisterPage = (req, res, next) => {
   res.render("pages/register", { layout: "auth_layout" }); // the response is finished - flash messages disappeared
 };
 
-const register = (req, res, next) => {
+const register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
     // send validation errors and fields with flash messages
@@ -21,7 +21,32 @@ const register = (req, res, next) => {
     req.flash("email", req.body.email);
     res.redirect("/register"); // the response is not finished
   } else {
-    res.redirect("/login");
+    try {
+      // email control
+      const user = await User.findOne({ email: req.body.email });
+      // if user registration already exists
+      if (user) {
+        req.flash("validation_error", [
+          { msg: "Email adresi sisteme kayıtlıdır." },
+        ]);
+        req.flash("firstName", req.body.firstName);
+        req.flash("lastName", req.body.lastName);
+        req.flash("email", req.body.email);
+        res.redirect("/register");
+      } else {
+        // if no user registration is available
+        const newUser = new User(req.body);
+        await newUser.save();
+        req.flash("success_message", [
+          {
+            msg: "Kaydınız başarılı bir şekilde gerçekleşmiştir. Sisteme giriş yapabilirsiniz",
+          },
+        ]);
+        res.redirect("/login"); 
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 

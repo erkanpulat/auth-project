@@ -6,6 +6,7 @@ const exphbs = require("express-handlebars");
 const flash = require("connect-flash");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
+const helpers = require("handlebars-helpers");
 // routers
 const authRouter = require("./src/routers/auth_router");
 
@@ -23,7 +24,9 @@ app.use(express.static("public"));
 
 // handlebars configuration
 const hbs = exphbs.create({
-  helpers: {},
+  helpers: {
+    comparison: helpers.comparison(),
+  },
 });
 app.engine("handlebars", hbs.engine);
 app.set("view engine", "handlebars");
@@ -55,6 +58,7 @@ app.use((req, res, next) => {
   // flash messages
   // res.locals, available only to the view(is) rendered during that request / response cycle (if any).
   res.locals.validation_error = req.flash("validation_error");
+  res.locals.success_message = req.flash("success_message");
   res.locals.firstName = req.flash("firstName");
   res.locals.lastName = req.flash("lastName");
   res.locals.email = req.flash("email");

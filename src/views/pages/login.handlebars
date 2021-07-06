@@ -13,6 +13,9 @@
                             <div class="p-5">
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Yeniden Hoş Geldin!</h1>
+                                    {{#if success_message}}
+                                    {{> _alert type="success" messagesArray=success_message}}
+                                    {{/if}}
                                     <form class="user" action="/login" method="POST">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user" name="email"
