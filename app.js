@@ -7,6 +7,7 @@ const flash = require("connect-flash");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
 const helpers = require("handlebars-helpers");
+const passport = require("passport");
 // routers
 const authRouter = require("./src/routers/auth_router");
 
@@ -64,6 +65,10 @@ app.use((req, res, next) => {
   res.locals.email = req.flash("email");
   next();
 });
+
+// passport middlewares
+app.use(passport.initialize());
+app.use(passport.session());
 
 let count = 0;
 // routes

@@ -1,9 +1,20 @@
 const User = require("../models/User");
 const { validationResult } = require("express-validator");
+const passport = require("passport");
+// passport strategy
+require("../config/passport_local")(passport);
 
 // login
 const getLoginPage = (req, res, next) => {
   res.render("pages/login", { layout: "auth_layout" });
+};
+
+const login = (req, res, next) => {
+  passport.authenticate("local", {
+    successRedirect: "/",
+    failureRedirect: "/login",
+    failureFlash: true,
+  })(req, res, next);
 };
 
 // register
@@ -42,7 +53,7 @@ const register = async (req, res, next) => {
             msg: "Kaydınız başarılı bir şekilde gerçekleşmiştir. Sisteme giriş yapabilirsiniz",
           },
         ]);
-        res.redirect("/login"); 
+        res.redirect("/login");
       }
     } catch (error) {
       console.log(error);
@@ -62,6 +73,7 @@ const getRPasswordPage = (req, res, next) => {
 
 module.exports = {
   getLoginPage,
+  login,
   getRegisterPage,
   register,
   getFPasswordPage,
