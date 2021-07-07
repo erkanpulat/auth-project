@@ -13,13 +13,22 @@
                             <div class="p-5">
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Yeniden Hoş Geldin!</h1>
-                                    {{#if success_message}}
-                                    {{> _alert type="success" messagesArray=success_message}}
-                                    {{/if}}
+                                    {{#or success_message validation_error login_error}}
+                                        {{#if success_message}}
+                                        {{> _alert type="success" messagesArray=success_message}}
+                                        {{/if}}
+                                        {{#if validation_error}}
+                                        {{> _alert type="danger" messagesArray=validation_error}}
+                                        {{/if}}
+                                        {{#if login_error}}
+                                        {{> _alert type="danger" messagesArray=login_error}}
+                                        {{/if}}
+                                    {{/or}}
                                     <form class="user" action="/login" method="POST">
                                         <div class="form-group">
                                             <input type="email" class="form-control form-control-user" name="email"
-                                                aria-describedby="emailHelp" placeholder="Email adresi">
+                                                value="{{#if email}}{{email}}{{/if}}" aria-describedby="emailHelp"
+                                                placeholder="Email adresi">
                                         </div>
                                         <div class="form-group">
                                             <input type="password" class="form-control form-control-user"

@@ -10,11 +10,20 @@ const getLoginPage = (req, res, next) => {
 };
 
 const login = (req, res, next) => {
-  passport.authenticate("local", {
-    successRedirect: "/",
-    failureRedirect: "/login",
-    failureFlash: true,
-  })(req, res, next);
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // send validation errors and fields with flash messages
+    req.flash("validation_error", errors.array());
+    req.flash("email", req.body.email);
+    res.redirect("/login");
+  } else {
+    req.flash("email", req.body.email);
+    passport.authenticate("local", {
+      successRedirect: "/",
+      failureRedirect: "/login",
+      failureFlash: true,
+    })(req, res, next);
+  }
 };
 
 // register

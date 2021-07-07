@@ -5,7 +5,11 @@ const validatorMiddleware = require("../middlewares/validation_middleware");
 // login
 router.get("/login", authController.getLoginPage);
 
-router.post("/login", authController.login);
+router.post(
+  "/login",
+  validatorMiddleware.validateLoginUser(),
+  authController.login
+);
 
 // register
 router.get("/register", authController.getRegisterPage);

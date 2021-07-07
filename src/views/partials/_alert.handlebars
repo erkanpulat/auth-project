@@ -12,9 +12,10 @@
 
 {{!-- danger alert --}}
 {{#eq type "danger"}}
+{{!-- val_error_syntax = [{msg:"val error"}] - log_error_syntax=["log error"] --}}
 {{#each messagesArray}}
 <div class="alert alert-danger alert-dismissible fade show" role="alert">
-    {{msg}}
+    {{#if msg}} {{msg}} {{else}} {{this}} {{/if}} {{!--  syntax problem fix --}}
     <button type="button" class="close" data-dismiss="alert" aria-label="Close">
         <span aria-hidden="true">&times;</span>
     </button>

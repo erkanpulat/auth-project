@@ -60,6 +60,7 @@ app.use((req, res, next) => {
   // res.locals, available only to the view(is) rendered during that request / response cycle (if any).
   res.locals.validation_error = req.flash("validation_error");
   res.locals.success_message = req.flash("success_message");
+  res.locals.login_error = req.flash("error");
   res.locals.firstName = req.flash("firstName");
   res.locals.lastName = req.flash("lastName");
   res.locals.email = req.flash("email");

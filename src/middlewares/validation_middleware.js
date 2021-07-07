@@ -37,6 +37,21 @@ const validateNewUser = () => {
   ];
 };
 
+// login - validate user
+const validateLoginUser = () => {
+  return [
+    body("email").trim().isEmail().withMessage("Geçerli bir mail giriniz."),
+
+    body("password")
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage("Şifreniz en az 6 karakter olmalıdır.")
+      .isLength({ max: 20 })
+      .withMessage("Şifreniz en fazla 20 karakter olmalıdır."),
+  ];
+};
+
 module.exports = {
   validateNewUser,
+  validateLoginUser,
 };
