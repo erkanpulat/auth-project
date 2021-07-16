@@ -79,7 +79,7 @@ app.get("/", (req, res, next) => {
   } else {
     req.session.count = 1;
   }
-  res.json({ message: "Welcome", count: req.session.count });
+  res.json({ message: "Welcome", count: req.session.count, user: req.user });
 });
 
 app.use("/", authRouter);

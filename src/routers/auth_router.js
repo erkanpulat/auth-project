@@ -1,9 +1,12 @@
 const router = require("express").Router();
+// controller
 const authController = require("../controllers/auth_controller");
+// middlewares
 const validatorMiddleware = require("../middlewares/validation_middleware");
+const authMiddleware = require("../middlewares/auth_middleware");
 
 // login
-router.get("/login", authController.getLoginPage);
+router.get("/login", authMiddleware.notLoggedIn, authController.getLoginPage);
 
 router.post(
   "/login",
@@ -12,7 +15,11 @@ router.post(
 );
 
 // register
-router.get("/register", authController.getRegisterPage);
+router.get(
+  "/register",
+  authMiddleware.notLoggedIn,
+  authController.getRegisterPage
+);
 
 router.post(
   "/register",
@@ -21,9 +28,17 @@ router.post(
 );
 
 // forget-password
-router.get("/forget-password", authController.getFPasswordPage);
+router.get(
+  "/forget-password",
+  authMiddleware.notLoggedIn,
+  authController.getFPasswordPage
+);
 
 // reset-password
-router.get("/reset-password", authController.getRPasswordPage);
+router.get(
+  "/reset-password",
+  authMiddleware.notLoggedIn,
+  authController.getRPasswordPage
+);
 
 module.exports = router;
