@@ -11,6 +11,7 @@ const passport = require("passport");
 // routers
 const authRouter = require("./src/routers/auth_router");
 const userRouter = require("./src/routers/user_router");
+const adminRouter = require("./src/routers/admin_router");
 
 // db connection
 require("./src/config/db_connection");
@@ -87,6 +88,8 @@ app.get("/", (req, res, next) => {
 app.use("/", authRouter);
 
 app.use("/user", userRouter);
+
+app.use("/admin", adminRouter);
 
 app.use((req, res, next) => {
   res.render("pages/404", { layout: "error_layout" });

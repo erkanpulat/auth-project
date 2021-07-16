@@ -1,10 +1,10 @@
 const router = require("express").Router();
 // controller
-const userController = require("../controllers/user_controller");
+const adminController = require("../controllers/admin_controller");
 // middlewares
 const authMiddleware = require("../middlewares/auth_middleware");
 
-// user home page
-router.get("/home", authMiddleware.loggedIn, userController.getHomePage);
+// admin home page
+router.get("/home", authMiddleware.loggedIn, adminController.getHomePage);
 
 module.exports = router;
