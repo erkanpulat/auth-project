@@ -19,11 +19,23 @@ const login = (req, res, next) => {
   } else {
     req.flash("email", req.body.email);
     passport.authenticate("local", {
-      successRedirect: "/",
+      successRedirect: "/user/home",
       failureRedirect: "/login",
       failureFlash: true,
     })(req, res, next);
   }
+};
+
+// logout
+const logout = (req, res, next) => {
+  req.logout(); // delete session-passport-user_id in db
+  req.session.destroy((error) => {
+    res.clearCookie("connect.sid"); // clear cookie in browser
+    res.render("pages/login", {
+      layout: "auth_layout",
+      success_message: [{ msg: "Başarıyla çıkış yapıldı." }],
+    });
+  });
 };
 
 // register
@@ -87,4 +99,5 @@ module.exports = {
   register,
   getFPasswordPage,
   getRPasswordPage,
+  logout,
 };

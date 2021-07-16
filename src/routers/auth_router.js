@@ -14,6 +14,9 @@ router.post(
   authController.login
 );
 
+// logout
+router.get("/logout", authMiddleware.loggedIn, authController.logout);
+
 // register
 router.get(
   "/register",

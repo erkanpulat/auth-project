@@ -10,6 +10,7 @@ const helpers = require("handlebars-helpers");
 const passport = require("passport");
 // routers
 const authRouter = require("./src/routers/auth_router");
+const userRouter = require("./src/routers/user_router");
 
 // db connection
 require("./src/config/db_connection");
@@ -21,6 +22,7 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 
 // static file middleware
+// it should be defined here so that no session is created in every request
 app.use(express.static("public"));
 
 // handlebars configuration
@@ -83,6 +85,8 @@ app.get("/", (req, res, next) => {
 });
 
 app.use("/", authRouter);
+
+app.use("/user", userRouter);
 
 app.use((req, res, next) => {
   res.render("pages/404", { layout: "error_layout" });
