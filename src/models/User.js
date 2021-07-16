@@ -33,6 +33,10 @@ const UserSchema = new Schema(
       trim: true,
       required: true,
     },
+    isAdmin: {
+      type: Boolean,
+      default: false,
+    },
   },
   { collection: "users", timestamps: true, versionKey: false }
 );

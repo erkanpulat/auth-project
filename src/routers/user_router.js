@@ -5,6 +5,11 @@ const userController = require("../controllers/user_controller");
 const authMiddleware = require("../middlewares/auth_middleware");
 
 // user home page
-router.get("/home", authMiddleware.loggedIn, userController.getHomePage);
+router.get(
+  "/home",
+  authMiddleware.loggedIn,
+  authMiddleware.isUser,
+  userController.getHomePage
+);
 
 module.exports = router;

@@ -18,7 +18,23 @@ const notLoggedIn = function (req, res, next) {
   }
 };
 
+const isAdmin = (req, res, next) => {
+  if (req.user.isAdmin) {
+    return next();
+  }
+  res.redirect("/404");
+};
+
+const isUser = (req, res, next) => {
+  if (!req.user.isAdmin) {
+    return next();
+  }
+  res.redirect("/404");
+};
+
 module.exports = {
   loggedIn,
   notLoggedIn,
+  isAdmin,
+  isUser,
 };

@@ -5,6 +5,11 @@ const adminController = require("../controllers/admin_controller");
 const authMiddleware = require("../middlewares/auth_middleware");
 
 // admin home page
-router.get("/home", authMiddleware.loggedIn, adminController.getHomePage);
+router.get(
+  "/home",
+  authMiddleware.loggedIn,
+  authMiddleware.isAdmin,
+  adminController.getHomePage
+);
 
 module.exports = router;

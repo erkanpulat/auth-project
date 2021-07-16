@@ -9,6 +9,7 @@ const MongoDBStore = require("connect-mongodb-session")(session);
 const helpers = require("handlebars-helpers");
 const passport = require("passport");
 // routers
+const publicRouter = require("./src/routers/public_router");
 const authRouter = require("./src/routers/auth_router");
 const userRouter = require("./src/routers/user_router");
 const adminRouter = require("./src/routers/admin_router");
@@ -74,16 +75,8 @@ app.use((req, res, next) => {
 app.use(passport.initialize());
 app.use(passport.session());
 
-let count = 0;
 // routes
-app.get("/", (req, res, next) => {
-  if (req.session.count) {
-    req.session.count++;
-  } else {
-    req.session.count = 1;
-  }
-  res.json({ message: "Welcome", count: req.session.count, user: req.user });
-});
+app.use("/", publicRouter);
 
 app.use("/", authRouter);
 
@@ -91,6 +84,7 @@ app.use("/user", userRouter);
 
 app.use("/admin", adminRouter);
 
+// 404 route
 app.use((req, res, next) => {
   res.render("pages/404", { layout: "error_layout" });
 });
