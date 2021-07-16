@@ -3,30 +3,57 @@ const User = require("../models/User");
 // user home page
 const getHomePage = async (req, res, next) => {
   try {
-    // total number of users
-    const totalNumOfUsers = await User.countDocuments({ isAdmin: false });
-
-    // number of users this month
-    const thisMthNumOfUsers = await User.countDocuments({
-      isAdmin: false,
-      createdAt: {
-        $gt: new Date(
-          // this month / 01 / this year 00:00:00
-          `${new Date().getMonth() + 1}/01/${new Date().getFullYear()}`
-        ),
+    // destructuring
+    const [
+      {
+        // default value
+        totalNumOfUsers = 0,
+        thisMthNumOfUsers = 0,
+        emailVerNumOfUsers = 0,
+        totalNumOfAdmins = 0,
       },
-    });
-
-    // Number of email verified users
-    const emailVerNumOfUsers = await User.countDocuments({
-      isAdmin: false,
-      emailActive: true,
-    });
-
-    // total number of admin
-    const totalNumOfAdmins = await User.countDocuments({
-      isAdmin: true,
-    });
+    ] = await User.aggregate([
+      {
+        $facet: {
+          // total number of users
+          totalNumOfUsers: [{ $match: { isAdmin: false } }, { $count: "num" }],
+          // number of users this month
+          thisMthNumOfUsers: [
+            {
+              $match: {
+                isAdmin: false,
+                createdAt: {
+                  $gt: new Date(
+                    // this month / 01 / this year 00:00:00
+                    `${
+                      new Date().getMonth() + 1
+                    }/01/${new Date().getFullYear()}`
+                  ),
+                },
+              },
+            },
+            { $count: "num" },
+          ],
+          // Number of email verified users
+          emailVerNumOfUsers: [
+            { $match: { isAdmin: false, emailActive: true } },
+            { $count: "num" },
+          ],
+          // total number of admin
+          totalNumOfAdmins: [{ $match: { isAdmin: true } }, { $count: "num" }],
+        },
+      },
+      {
+        $project: {
+          totalNumOfUsers: {
+            $arrayElemAt: ["$totalNumOfUsers.num", 0],
+          },
+          thisMthNumOfUsers: { $arrayElemAt: ["$thisMthNumOfUsers.num", 0] },
+          emailVerNumOfUsers: { $arrayElemAt: ["$emailVerNumOfUsers.num", 0] },
+          totalNumOfAdmins: { $arrayElemAt: ["$totalNumOfAdmins.num", 0] },
+        },
+      },
+    ]);
 
     res.render("pages/admin/home_page", {
       layout: "admin/home_layout",
