@@ -1,4 +1,4 @@
-// home page - scissors crossover :D
+// redirect home page - scissors crossover :D
 const getHomePage = (req, res, next) => {
   if (req.user.isAdmin) {
     res.redirect("/admin/home");
@@ -7,6 +7,12 @@ const getHomePage = (req, res, next) => {
   }
 };
 
+// redirect login page
+const getLoginPage = (req, res, next) => {
+  res.redirect("/login");
+};
+
 module.exports = {
   getHomePage,
+  getLoginPage,
 };

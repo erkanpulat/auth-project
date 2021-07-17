@@ -3,7 +3,7 @@ const loggedIn = function (req, res, next) {
   if (req.isAuthenticated()) {
     return next();
   } else {
-    // if user is not authenticated, show error and redirect login page
+    // show error and redirect login page, if user is not authenticated
     req.flash("error", ["Sayfaya erişmek için giriş yapınız!"]);
     res.redirect("/login");
   }
@@ -14,7 +14,8 @@ const notLoggedIn = function (req, res, next) {
   if (!req.isAuthenticated()) {
     return next();
   } else {
-    res.redirect("/");
+    // redirect home page, if user is authenticated
+    res.redirect("/home");
   }
 };
 

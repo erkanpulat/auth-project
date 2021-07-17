@@ -19,7 +19,7 @@ const login = (req, res, next) => {
   } else {
     req.flash("email", req.body.email);
     passport.authenticate("local", {
-      successRedirect: "/",
+      successRedirect: "/home",
       failureRedirect: "/login",
       failureFlash: true,
     })(req, res, next);

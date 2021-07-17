@@ -16,6 +16,8 @@ const publicRouter = require("./src/routers/public_router");
 const authRouter = require("./src/routers/auth_router");
 const userRouter = require("./src/routers/user_router");
 const adminRouter = require("./src/routers/admin_router");
+// middlewares
+const authMiddleware = require("./src/middlewares/auth_middleware");
 
 // db connection
 require("./src/config/db_connection");
@@ -92,7 +94,7 @@ app.use("/user", userRouter);
 app.use("/admin", adminRouter);
 
 // 404 route
-app.use((req, res, next) => {
+app.use(authMiddleware.loggedIn, (req, res, next) => {
   res.render("pages/404", { layout: "error_layout" });
 });
 
