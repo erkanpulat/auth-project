@@ -7,9 +7,22 @@ const authMiddleware = require("../middlewares/auth_middleware");
 // admin home page
 router.get(
   "/home",
-  authMiddleware.loggedIn,
-  authMiddleware.isAdmin,
+  [authMiddleware.loggedIn, authMiddleware.isAdmin],
   adminController.getHomePage
+);
+
+// admin home page
+router.get(
+  "/users-table",
+  [authMiddleware.loggedIn, authMiddleware.isAdmin],
+  adminController.getUserTablePage
+);
+
+// user delete on table
+router.delete(
+  "/users-table/:id",
+  [authMiddleware.loggedIn, authMiddleware.isAdmin],
+  adminController.deleteUser
 );
 
 module.exports = router;

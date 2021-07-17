@@ -6,8 +6,11 @@ const exphbs = require("express-handlebars");
 const flash = require("connect-flash");
 const session = require("express-session");
 const MongoDBStore = require("connect-mongodb-session")(session);
-const helpers = require("handlebars-helpers");
 const passport = require("passport");
+const methodOverride = require("method-override");
+// helpers
+const helpers = require("handlebars-helpers");
+const adminHelpers = require("./src/helpers/admin_helpers");
 // routers
 const publicRouter = require("./src/routers/public_router");
 const authRouter = require("./src/routers/auth_router");
@@ -22,6 +25,8 @@ const app = express();
 
 // body parser middleware
 app.use(express.urlencoded({ extended: true }));
+// lets you use HTTP verbs such as PUT or DELETE
+app.use(methodOverride("_method"));
 
 // static file middleware
 // it should be defined here so that no session is created in every request
@@ -31,6 +36,8 @@ app.use(express.static("public"));
 const hbs = exphbs.create({
   helpers: {
     comparison: helpers.comparison(),
+    generateDate: adminHelpers.generateDate,
+    activeStatusTurn: adminHelpers.activeStatusTurn,
   },
 });
 app.engine("handlebars", hbs.engine);

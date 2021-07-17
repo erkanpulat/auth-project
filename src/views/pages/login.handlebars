@@ -1,9 +1,7 @@
 <div class="container">
     <!-- Outer Row -->
     <div class="row justify-content-center">
-
         <div class="col-xl-10 col-lg-12 col-md-9">
-
             <div class="card o-hidden border-0 shadow-lg my-5">
                 <div class="card-body p-0">
                     <!-- Nested Row within Card Body -->
@@ -14,15 +12,15 @@
                                 <div class="text-center">
                                     <h1 class="h4 text-gray-900 mb-4">Yeniden Hoş Geldin!</h1>
                                     {{#or success_message validation_error login_error}}
-                                        {{#if success_message}}
-                                        {{> _alert type="success" messagesArray=success_message}}
-                                        {{/if}}
-                                        {{#if validation_error}}
-                                        {{> _alert type="danger" messagesArray=validation_error}}
-                                        {{/if}}
-                                        {{#if login_error}}
-                                        {{> _alert type="danger" messagesArray=login_error}}
-                                        {{/if}}
+                                    {{#if success_message}}
+                                    {{> _alert type="success" messagesArray=success_message}}
+                                    {{/if}}
+                                    {{#if validation_error}}
+                                    {{> _alert type="danger" messagesArray=validation_error}}
+                                    {{/if}}
+                                    {{#if login_error}}
+                                    {{> _alert type="danger" messagesArray=login_error}}
+                                    {{/if}}
                                     {{/or}}
                                     <form class="user" action="/login" method="POST">
                                         <div class="form-group">
@@ -64,9 +62,6 @@
                         </div>
                     </div>
                 </div>
-
             </div>
-
         </div>
-
     </div>

@@ -1,0 +1,67 @@
+<!-- Begin Page Content -->
+<div class="container-fluid">
+
+    <!-- Page Heading -->
+    <h1 class="h3 mb-2 text-gray-800">Kullanıcılar Tablosu</h1>
+    <p class="mb-4">Tüm kullanıcıları listeleyebilir, arama yapabilir, kullanıcı silme işlemini gerçekleştirebilirsiniz.</p>
+
+    <!-- DataTales Example -->
+    <div class="card shadow mb-4">
+        <div class="card-header py-3">
+            <h6 class="m-0 font-weight-bold text-primary">Kullanıcılar</h6>
+        </div>
+        <div class="card-body">
+            <div class="table-responsive">
+                <table class="table table-bordered" id="dataTable" width="100%" cellspacing="0">
+                    <thead>
+                        <tr>
+                            <th>Ad</th>
+                            <th>Soyad</th>
+                            <th>E-posta</th>
+                            <th>Onay</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </thead>
+                    <tfoot>
+                        <tr>
+                            <th>Ad</th>
+                            <th>Soyad</th>
+                            <th>E-posta</th>
+                            <th>Onay</th>
+                            <th>Kayıt Tarihi</th>
+                            <th>İşlemler</th>
+                        </tr>
+                    </tfoot>
+                    <tbody>
+                        {{#each allUsers}}
+                        <tr>
+                            <td>{{firstName}}</td>
+                            <td>{{lastName}}</td>
+                            <td>{{email}}</td>
+                            <td>{{activeStatusTurn emailActive}}</td>
+                            <td>{{generateDate createdAt 'MMM DD YYYY'}}</td>
+                            <td class="text-center">
+                                <div class="btn-group" role="group" aria-label="Button Group">
+                                    <button type="button" class="btn btn-sm btn-danger deleteButton">
+                                        <i class="fas fa-user-minus fa-sm fa-fw mr-2 text-white-400"></i>
+                                        Sil
+                                    </button>
+
+                                    <form action="/admin/users-table/{{_id}}?_method=DELETE" method="POST">
+                                        <input type="hidden" name="_method" value="DELETE">
+                                        <button type="submit" class="btn btn-sm btn-danger d-none deleteOkButton">
+                                            <i class="fas fa-check-double fa-sm fa-fw mr-2 text-white-400"></i>
+                                            Onayla
+                                        </button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                        {{/each}}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
