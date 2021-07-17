@@ -32,6 +32,7 @@ module.exports = function (passport) {
 
   // get user(session->user.id) from database
   passport.deserializeUser(function (id, done) {
+    //  hidden fields : _id and password
     User.findById(id, { _id: 0, password: 0 }, function (err, user) {
       done(err, user);
     });
