@@ -63,7 +63,9 @@ const getHomePage = async (req, res, next) => {
       emailVerNumOfUsers,
       // percentile
       emailVerPercUsers: parseInt(
-        (emailVerNumOfUsers / totalNumOfUsers) * 100,
+        isNaN(emailVerNumOfUsers / totalNumOfUsers)
+          ? 0
+          : (emailVerNumOfUsers / totalNumOfUsers) * 100,
         10
       ),
       totalNumOfAdmins,

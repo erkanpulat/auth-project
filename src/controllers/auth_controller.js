@@ -1,5 +1,6 @@
 const User = require("../models/User");
 const { validationResult } = require("express-validator");
+const bcrypt = require("bcrypt");
 const passport = require("passport");
 // passport strategy
 require("../config/passport_local")(passport);
@@ -68,6 +69,8 @@ const register = async (req, res, next) => {
       } else {
         // if no user registration is available
         const newUser = new User(req.body);
+        // encrypt user's password
+        newUser.password = await bcrypt.hash(req.body.password, 10);
         await newUser.save();
         req.flash("success_message", [
           {

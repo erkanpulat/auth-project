@@ -1,5 +1,6 @@
 const LocalStrategy = require("passport-local").Strategy;
 const User = require("../models/User");
+const bcrypt = require("bcrypt");
 
 module.exports = function (passport) {
   const options = {
@@ -12,8 +13,13 @@ module.exports = function (passport) {
     new LocalStrategy(options, async (email, password, done) => {
       try {
         // matching user in database
-        const user = await User.findOne({ email, password });
-        if (!user) {
+        const user = await User.findOne({ email });
+        //  data(passwords) to compare
+        const bcryptPassword = user
+          ? await bcrypt.compare(password, user.password)
+          : false;
+        // if the user is not found or the password does not match
+        if (!user || !bcryptPassword) {
           // error,user,options
           return done(null, false, { message: "Email veya şifre hatalı!" });
         } else {
