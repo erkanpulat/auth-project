@@ -9,11 +9,11 @@ const passport = require("passport");
 // passport strategy
 require("../config/passport_local")(passport);
 
-// login
+// login page
 const getLoginPage = (req, res, next) => {
   res.render("pages/login", { layout: "auth_layout" });
 };
-
+// login
 const login = (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -43,11 +43,11 @@ const logout = (req, res, next) => {
   });
 };
 
-// register
+// register page
 const getRegisterPage = (req, res, next) => {
   res.render("pages/register", { layout: "auth_layout" }); // the response is finished - flash messages disappeared
 };
-
+// register
 const register = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
@@ -155,14 +155,59 @@ const register = async (req, res, next) => {
   }
 };
 
-// forget-password
+// forget-password page
 const getFPasswordPage = (req, res, next) => {
   res.render("pages/forget_password", { layout: "auth_layout" });
 };
 
-// reset-password
+// reset-password page
 const getRPasswordPage = (req, res, next) => {
   res.render("pages/reset_password", { layout: "auth_layout" });
+};
+
+// verify email
+const verifyMail = (req, res, next) => {
+  const token = req.query.id;
+  if (token) {
+    try {
+      // jwt verify
+      jwt.verify(
+        token,
+        process.env.CONFIRM_MAIL_JWT_SECRET,
+        async (error, decoded) => {
+          // if the token is invalid
+          if (error) {
+            req.flash("error", ["Doğrulama kodu hatalı veya süresi geçti!"]);
+            res.redirect("/login");
+          } else {
+            // emailActive update
+            const idInToken = decoded.id;
+            const result = await User.findByIdAndUpdate(idInToken, {
+              emailActive: true,
+            });
+            if (result) {
+              // emailActive update succesfull
+              req.flash("success_message", [
+                {
+                  msg: "Email adresiniz onaylandı. Sisteme giriş yapabilirsiniz.",
+                },
+              ]);
+              res.redirect("/login");
+            } else {
+              // emailActive update failed
+              req.flash("error", ["Lütfen tekrar kayıt yapınız."]);
+              res.redirect("/login");
+            }
+          }
+        }
+      );
+    } catch (error) {
+      console.log(error);
+    }
+  } else {
+    req.flash("error", ["Doğrulamak için token bulunamadı veya geçersiz!"]);
+    res.redirect("/login");
+  }
 };
 
 module.exports = {
@@ -173,4 +218,5 @@ module.exports = {
   getFPasswordPage,
   getRPasswordPage,
   logout,
+  verifyMail,
 };

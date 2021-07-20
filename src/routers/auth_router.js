@@ -44,4 +44,7 @@ router.get(
   authController.getRPasswordPage
 );
 
+// verify email
+router.get("/verify", authController.verifyMail);
+
 module.exports = router;
