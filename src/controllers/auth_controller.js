@@ -1,6 +1,10 @@
 const User = require("../models/User");
 const { validationResult } = require("express-validator");
 const bcrypt = require("bcrypt");
+const jwt = require("jsonwebtoken");
+const nodemailer = require("nodemailer");
+const hbs = require("nodemailer-express-handlebars");
+const path = require("path");
 const passport = require("passport");
 // passport strategy
 require("../config/passport_local")(passport);
@@ -58,7 +62,7 @@ const register = async (req, res, next) => {
       // email control
       const user = await User.findOne({ email: req.body.email });
       // if user registration already exists
-      if (user) {
+      if (user && user.emailActive) {
         req.flash("validation_error", [
           { msg: "Email adresi sisteme kayıtlıdır." },
         ]);
@@ -67,16 +71,82 @@ const register = async (req, res, next) => {
         req.flash("email", req.body.email);
         res.redirect("/register");
       } else {
-        // if no user registration is available
+        // If there is a user and the email address is not active, delete the user
+        if (user && !user.emailActive) {
+          await User.findByIdAndRemove({ _id: user._id });
+        }
+        // create new user
         const newUser = new User(req.body);
         // encrypt user's password
         newUser.password = await bcrypt.hash(req.body.password, 10);
         await newUser.save();
+
+        // jwt payload
+        const jwtPayload = {
+          id: newUser._id,
+          email: newUser.email,
+        };
+        // jwt token
+        const jwtToken = jwt.sign(
+          jwtPayload,
+          process.env.CONFIRM_MAIL_JWT_SECRET,
+          {
+            expiresIn: "1d", // valid for one day
+          }
+        );
+
+        // mail send URL with jwt token
+        const verifyURL = process.env.WEB_SITE_URL + "verify?id=" + jwtToken;
+
+        // transporter object
+        let transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_PASSWORD,
+          },
+        });
+
+        // preparing email template -> nodemailer-express-handlebars
+        transporter.use(
+          "compile",
+          hbs({
+            viewEngine: {
+              extName: ".handlebars",
+              layoutsDir: path.join(__dirname, "../views/layouts/"),
+              defaultLayout: "verify_email_layout",
+            },
+            extName: ".handlebars",
+            viewPath: path.join(__dirname, "../views/pages/"),
+          })
+        );
+
+        // send mail with defined transport object
+        await transporter.sendMail(
+          {
+            from: `Auth Projesi <${process.env.GMAIL_USER}>`,
+            to: newUser.email,
+            subject: "Email Adresinizi Onaylayınız",
+            template: "email_template",
+            context: {
+              verifyURL,
+            },
+          },
+          (error, info) => {
+            if (error) {
+              console.log(error);
+            } else {
+              transporter.close();
+            }
+          }
+        );
+
         req.flash("success_message", [
           {
-            msg: "Kaydınız başarılı bir şekilde gerçekleşmiştir. Sisteme giriş yapabilirsiniz",
+            msg: "Kaydınız başarılıdır. Email adresinizi onayladıktan sonra sisteme giriş yapabilirsiniz.",
           },
         ]);
+
         res.redirect("/login");
       }
     } catch (error) {

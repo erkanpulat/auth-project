@@ -23,6 +23,14 @@ module.exports = function (passport) {
           // error,user,options
           return done(null, false, { message: "Email veya şifre hatalı!" });
         } else {
+          // is the user email address active?
+          if (!user.emailActive) {
+            return done(null, false, {
+              message:
+                "Sisteme giriş yapabilmek için lütfen email adresinizi onaylayınız.",
+            });
+          }
+          // user exists, password is correct and e-mail address is active
           return done(null, user);
         }
       } catch (error) {
