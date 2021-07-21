@@ -37,6 +37,12 @@ router.get(
   authController.getFPasswordPage
 );
 
+router.post(
+  "/forget-password",
+  validatorMiddleware.validateEmail(),
+  authController.fPassword
+);
+
 // reset-password
 router.get(
   "/reset-password",

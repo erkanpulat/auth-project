@@ -127,6 +127,8 @@ const register = async (req, res, next) => {
             from: `Auth Projesi <${process.env.GMAIL_USER}>`,
             to: newUser.email,
             subject: "Email Adresinizi Onaylayınız",
+            text:
+              "Email adresinizi doğrulamak için linke tıklayınız: " + verifyURL,
             template: "email_template",
             context: {
               verifyURL,
@@ -158,6 +160,17 @@ const register = async (req, res, next) => {
 // forget-password page
 const getFPasswordPage = (req, res, next) => {
   res.render("pages/forget_password", { layout: "auth_layout" });
+};
+
+// forget-password
+const fPassword = (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // send validation errors and fields with flash messages
+    req.flash("validation_error", errors.array());
+    req.flash("email", req.body.email);
+    res.redirect("/forget-password"); // the response is not finished
+  }
 };
 
 // reset-password page
@@ -216,6 +229,7 @@ module.exports = {
   getRegisterPage,
   register,
   getFPasswordPage,
+  fPassword,
   getRPasswordPage,
   logout,
   verifyMail,

@@ -51,7 +51,15 @@ const validateLoginUser = () => {
   ];
 };
 
+// forget-password - validate email
+const validateEmail = () => {
+  return [
+    body("email").trim().isEmail().withMessage("Geçerli bir mail giriniz."),
+  ];
+};
+
 module.exports = {
   validateNewUser,
   validateLoginUser,
+  validateEmail,
 };
