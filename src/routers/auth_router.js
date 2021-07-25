@@ -45,9 +45,15 @@ router.post(
 
 // reset-password
 router.get(
-  "/reset-password",
+  "/reset-password/:id/:token",
   authMiddleware.notLoggedIn,
   authController.getRPasswordPage
+);
+
+router.post(
+  "/reset-password",
+  validatorMiddleware.validatePassword(),
+  authController.rPassword
 );
 
 // verify email

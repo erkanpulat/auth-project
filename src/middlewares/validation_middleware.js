@@ -58,8 +58,30 @@ const validateEmail = () => {
   ];
 };
 
+// reset-password
+const validatePassword = () => {
+  return [
+    body("password")
+      .trim()
+      .isLength({ min: 6 })
+      .withMessage("Şifreniz en az 6 karakter olmalıdır.")
+      .isLength({ max: 20 })
+      .withMessage("Şifreniz en fazla 20 karakter olmalıdır."),
+
+    body("rePassword")
+      .trim()
+      .custom((value, { req }) => {
+        if (value !== req.body.password) {
+          throw new Error("Şifreler aynı değil!");
+        }
+        return true;
+      }),
+  ];
+};
+
 module.exports = {
   validateNewUser,
   validateLoginUser,
   validateEmail,
+  validatePassword,
 };

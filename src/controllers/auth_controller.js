@@ -6,6 +6,7 @@ const nodemailer = require("nodemailer");
 const hbs = require("nodemailer-express-handlebars");
 const path = require("path");
 const passport = require("passport");
+const mongoose = require("mongoose");
 // passport strategy
 require("../config/passport_local")(passport);
 
@@ -163,19 +164,197 @@ const getFPasswordPage = (req, res, next) => {
 };
 
 // forget-password
-const fPassword = (req, res, next) => {
+const fPassword = async (req, res, next) => {
   const errors = validationResult(req);
   if (!errors.isEmpty()) {
+    // email address is invalid
     // send validation errors and fields with flash messages
     req.flash("validation_error", errors.array());
     req.flash("email", req.body.email);
-    res.redirect("/forget-password"); // the response is not finished
+    res.redirect("/forget-password");
+  } else {
+    // email address is valid
+    try {
+      // email and emailActive control
+      const user = await User.findOne({
+        email: req.body.email,
+        emailActive: true,
+      });
+      // if user found
+      if (user) {
+        // jwt payload
+        const jwtPayload = {
+          id: user._id,
+          email: user.email,
+        };
+        // jwt token
+        const jwtToken = jwt.sign(
+          jwtPayload,
+          process.env.RESET_PASSWORD_JWT_SECRET + "-" + user.password,
+          {
+            expiresIn: "1d", // valid for one day
+          }
+        );
+
+        const resetURL = `${process.env.WEB_SITE_URL}reset-password/${user._id}/${jwtToken}`;
+
+        // transporter object
+        let transporter = nodemailer.createTransport({
+          service: "gmail",
+          auth: {
+            user: process.env.GMAIL_USER,
+            pass: process.env.GMAIL_PASSWORD,
+          },
+        });
+
+        // send mail with defined transport object
+        await transporter.sendMail(
+          {
+            from: `Auth Projesi <${process.env.GMAIL_USER}>`,
+            to: user.email,
+            subject: "Şifre Sıfırlama",
+            text: "Şifrenizi sıfırlamak için linke tıklayınız: " + resetURL,
+          },
+          (error, info) => {
+            if (error) {
+              console.log(error);
+            } else {
+              transporter.close();
+            }
+          }
+        );
+
+        req.flash("success_message", [
+          {
+            msg: "Şifre sıfırlama bağlantısı email adresinize iletilmiştir. Şifrenizi yeniledikten sonra sisteme giriş yapabilirsiniz.",
+          },
+        ]);
+
+        res.redirect("/login");
+      } else {
+        // if user not found
+        req.flash("validation_error", [
+          { msg: "Kullanıcı bulunamadı veya hesabınız aktif değil!" },
+        ]);
+        req.flash("email", req.body.email);
+        res.redirect("/forget-password");
+      }
+    } catch (error) {
+      console.log(error);
+    }
   }
 };
 
 // reset-password page
-const getRPasswordPage = (req, res, next) => {
-  res.render("pages/reset_password", { layout: "auth_layout" });
+const getRPasswordPage = async (req, res, next) => {
+  const id = mongoose.Types.ObjectId.isValid(req.params.id)
+    ? req.params.id
+    : undefined;
+  const token = req.params.token;
+
+  if (id && token) {
+    const user = await User.findOne({ _id: id });
+    // if user found
+    if (user) {
+      // jwt verify
+      jwt.verify(
+        token,
+        process.env.RESET_PASSWORD_JWT_SECRET + "-" + user.password,
+        async (error, decoded) => {
+          // if the token is invalid
+          if (error) {
+            req.flash("error", [
+              "Doğrulama kodu daha önce kullanıldı veya süresi geçti!",
+            ]);
+            res.redirect("/forget-password");
+          } else {
+            // token is valid - successful
+            res.render("pages/reset_password", {
+              layout: "auth_layout",
+              url: req.url,
+            });
+          }
+        }
+      );
+    } else {
+      // if user not found
+      req.flash("error", ["Doğrulama kodu hatalı veya eksik!"]);
+      res.redirect("/forget-password");
+    }
+  } else {
+    // if token or id not found
+    req.flash("error", ["Doğrulama kodu hatalı veya eksik!"]);
+    res.redirect("/forget-password");
+  }
+};
+
+const rPassword = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // password validation error or passwords don't match
+    req.flash("validation_error", errors.array());
+    res.redirect(req.body.url);
+  } else {
+    try {
+      // id and token in form
+      const id = mongoose.Types.ObjectId.isValid(req.body.url.split("/")[2])
+        ? req.body.url.split("/")[2]
+        : undefined;
+      const token = req.body.url.split("/")[3];
+
+      const user = await User.findOne({
+        _id: id,
+      });
+
+      // if user found
+      if (user) {
+        // jwt verify - improve security
+        jwt.verify(
+          token,
+          process.env.RESET_PASSWORD_JWT_SECRET + "-" + user.password,
+          async (error, decoded) => {
+            // if token is invalid
+            if (error) {
+              req.flash("error", [
+                "Şifreniz güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.",
+              ]);
+              res.redirect("/forget-password");
+            } else {
+              // if token is valid
+              // password update
+              const hashedPassword = await bcrypt.hash(req.body.password, 10);
+              const result = await User.findByIdAndUpdate(id, {
+                password: hashedPassword,
+              });
+              if (result) {
+                // password update succesfull
+                req.flash("success_message", [
+                  {
+                    msg: "Şifreniz başarıyla güncellenmiştir. Sisteme giriş yapabilirsiniz.",
+                  },
+                ]);
+                res.redirect("/login");
+              } else {
+                // password update failed
+                req.flash("error", [
+                  "Şifreniz güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.",
+                ]);
+                res.redirect("/forget-password");
+              }
+            }
+          }
+        );
+      } else {
+        // if user not found
+        req.flash("error", [
+          "Şifreniz güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.",
+        ]);
+        res.redirect("/forget-password");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
 };
 
 // verify email
@@ -231,6 +410,7 @@ module.exports = {
   getFPasswordPage,
   fPassword,
   getRPasswordPage,
+  rPassword,
   logout,
   verifyMail,
 };
