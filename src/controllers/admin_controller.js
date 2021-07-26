@@ -1,6 +1,7 @@
 const User = require("../models/User");
+const { validationResult } = require("express-validator");
 
-// user home page
+// admin home page
 const getHomePage = async (req, res, next) => {
   try {
     // destructuring
@@ -103,8 +104,57 @@ const deleteUser = async (req, res, next) => {
   }
 };
 
+// admin profile page
+const getProfilePage = async (req, res, next) => {
+  console.log(JSON.parse(JSON.stringify(req.user)));
+  res.render("pages/admin/profile", {
+    layout: "admin/home_layout",
+    user: JSON.parse(JSON.stringify(req.user)), // copy object
+    adminName: `${req.user.firstName} ${req.user.lastName}`,
+  });
+};
+
+// admin profile update
+const profileUpdate = async (req, res, next) => {
+  const errors = validationResult(req);
+  if (!errors.isEmpty()) {
+    // send validation errors and fields with flash messages
+    req.flash("validation_error", errors.array());
+    req.flash("firstName", req.body.firstName);
+    req.flash("lastName", req.body.lastName);
+    res.redirect("/admin/profile");
+  } else {
+    try {
+      const result = await User.findByIdAndUpdate(req.user._id, {
+        ...req.body,
+      });
+      if (result) {
+        // profile update succesfull
+        req.flash("success_message", [
+          {
+            msg: "Profiliniz başarıyla güncellenmiştir.",
+          },
+        ]);
+        res.redirect("/admin/profile");
+      } else {
+        // profile update failed
+        req.flash("validation_error", [
+          {
+            msg: "Profil güncellenirken bir hata oluştu. Lütfen tekrar deneyiniz.",
+          },
+        ]);
+        res.redirect("/admin/profile");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  }
+};
+
 module.exports = {
   getHomePage,
   getUserTablePage,
   deleteUser,
+  getProfilePage,
+  profileUpdate,
 };

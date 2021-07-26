@@ -1,0 +1,51 @@
+<div class="container-fluid">
+    <div class="wrapper bg-white mt-sm-5">
+        <h4 class="pb-4 border-bottom">Account settings</h4>
+        {{#or success_message validation_error}}
+        {{#if success_message}}
+        {{> _alert type="success" messagesArray=success_message}}
+        {{/if}}
+        {{#if validation_error}}
+        {{> _alert type="danger" messagesArray=validation_error}}
+        {{/if}}
+        {{/or}}
+        <div class="d-flex align-items-start py-3 border-bottom"> <img
+                src="https://images.pexels.com/photos/1037995/pexels-photo-1037995.jpeg?auto=compress&cs=tinysrgb&dpr=1&w=500"
+                class="img" alt="">
+            <div class="pl-sm-4 pl-2" id="img-section"> <b>Profil Fotoğrafı</b>
+                <p> Sadece .png formatı kabul edilmektedir. Maksimum boyut 1MB</p> <button
+                    class="btn btn-outline-primary"><b>Yükle</b></button>
+            </div>
+        </div>
+        <div class="py-2">
+            <form method="POST" action="/admin/profile">
+                <div class="row py-2">
+                    <div class="col-md-6"> <label for="firstname">Ad</label> <input type="text"
+                            class="bg-light form-control" name="firstName"
+                            value="{{#if firstName}}{{firstName}}{{else}}{{user.firstName}}{{/if}}"
+                            placeholder="Adınız"> </div>
+                    <div class="col-md-6 pt-md-0 pt-3"> <label for="lastname">Soyad</label> <input type="text"
+                            class="bg-light form-control" name="lastName"
+                            value="{{#if lastName}}{{lastName}}{{else}}{{user.lastName}}{{/if}}"
+                            placeholder="Soyadınız"> </div>
+                </div>
+                <div class="row py-2">
+                    <div class="col-md-6 offset-md-3"> <label for="email">Email Adresi</label> <input type="text"
+                            class="bg-light form-control" value="{{user.email}}" placeholder="Email adresiniz" readonly>
+                    </div>
+                </div>
+                <div class="py-3 pb-4 border-bottom"> <button type="submit"
+                        class="btn btn-block btn-primary mr-3">Değişiklikleri
+                        Kaydet</button>
+                </div>
+            </form>
+            <div class="d-sm-flex align-items-center pt-3" id="deactivate">
+                <div> <b>Deactivate your account</b>
+                    <p>Details about your company account and password</p>
+                </div>
+                <div class="ml-auto"> <button class="btn btn-danger">Deactivate</button> </div>
+            </div>
+
+        </div>
+    </div>
+</div>

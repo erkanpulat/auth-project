@@ -79,9 +79,29 @@ const validatePassword = () => {
   ];
 };
 
+// admin profil update
+const validateFullName = () => {
+  return [
+    body("firstName")
+      .trim()
+      .isLength({ min: 2 })
+      .withMessage("İsim en az 2 karakter olmalıdır.")
+      .isLength({ max: 30 })
+      .withMessage("İsim en fazla 30 karakter olmalıdır."),
+
+    body("lastName")
+      .trim()
+      .isLength({ min: 2 })
+      .withMessage("Soyad en az 2 karakter olmalıdır.")
+      .isLength({ max: 30 })
+      .withMessage("Soyad en fazla 30 karakter olmalıdır."),
+  ];
+};
+
 module.exports = {
   validateNewUser,
   validateLoginUser,
   validateEmail,
   validatePassword,
+  validateFullName,
 };
