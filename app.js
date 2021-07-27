@@ -33,6 +33,7 @@ app.use(methodOverride("_method"));
 // static file middleware
 // it should be defined here so that no session is created in every request
 app.use(express.static("public"));
+app.use("/uploads", express.static(path.join(__dirname, "src/uploads")));
 
 // handlebars configuration
 const hbs = exphbs.create({

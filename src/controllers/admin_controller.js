@@ -1,6 +1,6 @@
 const User = require("../models/User");
 const { validationResult } = require("express-validator");
-
+const multer = require("multer");
 // admin home page
 const getHomePage = async (req, res, next) => {
   try {
@@ -58,7 +58,8 @@ const getHomePage = async (req, res, next) => {
 
     res.render("pages/admin/dashboard", {
       layout: "admin/home_layout",
-      adminName: `${req.user.firstName} ${req.user.lastName}`,
+      title: "Admin Ana Sayfa",
+      user: JSON.parse(JSON.stringify(req.user)),
       totalNumOfUsers,
       thisMthNumOfUsers,
       emailVerNumOfUsers,
@@ -85,7 +86,8 @@ const getUserTablePage = async (req, res, next) => {
 
   res.render("pages/admin/users_table", {
     layout: "admin/home_layout",
-    adminName: `${req.user.firstName} ${req.user.lastName}`,
+    title: "Kullanıcılar Tablosu",
+    user: JSON.parse(JSON.stringify(req.user)),
     allUsers,
   });
 };
@@ -108,22 +110,29 @@ const deleteUser = async (req, res, next) => {
 const getProfilePage = async (req, res, next) => {
   res.render("pages/admin/profile", {
     layout: "admin/home_layout",
+    title: "Profil Ayarları",
     user: JSON.parse(JSON.stringify(req.user)), // copy object
-    adminName: `${req.user.firstName} ${req.user.lastName}`,
   });
 };
 
 // admin profile update
 const profileUpdate = async (req, res, next) => {
-  const errors = validationResult(req);
-  if (!errors.isEmpty()) {
+  // express-validator errors
+  const errors = Array.from(validationResult(req).array());
+  // multer file filter error
+  if (req.file_error) errors.push({ msg: req.file_error });
+  if (errors.length > 0) {
     // send validation errors and fields with flash messages
-    req.flash("validation_error", errors.array());
+    req.flash("validation_error", errors);
     req.flash("firstName", req.body.firstName);
     req.flash("lastName", req.body.lastName);
     res.redirect("/admin/profile");
   } else {
     try {
+      // req.file - multer
+      if (req.file) {
+        req.body.avatar = req.file.filename;
+      }
       const result = await User.findByIdAndUpdate(req.user._id, {
         ...req.body,
       });

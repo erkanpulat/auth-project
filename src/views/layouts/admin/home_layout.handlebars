@@ -8,8 +8,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <meta name="description" content="">
     <meta name="author" content="">
-
-    <title>Admin Ana Sayfa</title>
+    <title>{{ title }}</title>
 
     <!-- Custom fonts for this template-->
     <link href="/vendor/fontawesome-free/css/all.min.css" rel="stylesheet" type="text/css">
@@ -35,7 +34,7 @@
         <div id="content-wrapper" class="d-flex flex-column">
             <div id="content">
                 {{!-- topbar partial --}}
-                {{> admin/_topbar name=adminName }}
+                {{> admin/_topbar admin=user }}
                 {{!-- body --}}
                 {{{body}}}
             </div>

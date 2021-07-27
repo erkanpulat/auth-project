@@ -12,7 +12,7 @@ require("../config/passport_local")(passport);
 
 // login page
 const getLoginPage = (req, res, next) => {
-  res.render("pages/login", { layout: "auth_layout" });
+  res.render("pages/login", { layout: "auth_layout", title: "Giriş Yap"});
 };
 // login
 const login = (req, res, next) => {
@@ -39,6 +39,7 @@ const logout = (req, res, next) => {
     res.clearCookie("connect.sid"); // clear cookie in browser
     res.render("pages/login", {
       layout: "auth_layout",
+    title: "Çıkış Yap",
       success_message: [{ msg: "Başarıyla çıkış yapıldı." }],
     });
   });
@@ -46,7 +47,7 @@ const logout = (req, res, next) => {
 
 // register page
 const getRegisterPage = (req, res, next) => {
-  res.render("pages/register", { layout: "auth_layout" }); // the response is finished - flash messages disappeared
+  res.render("pages/register", { layout: "auth_layout", title:"Kayıt Ol" }); // the response is finished - flash messages disappeared
 };
 // register
 const register = async (req, res, next) => {
@@ -160,7 +161,7 @@ const register = async (req, res, next) => {
 
 // forget-password page
 const getFPasswordPage = (req, res, next) => {
-  res.render("pages/forget_password", { layout: "auth_layout" });
+  res.render("pages/forget_password", { layout: "auth_layout", title:"Şifremi Unuttum" });
 };
 
 // forget-password
@@ -271,6 +272,7 @@ const getRPasswordPage = async (req, res, next) => {
             // token is valid - successful
             res.render("pages/reset_password", {
               layout: "auth_layout",
+              title: "Şifre Sıfırlama",
               url: req.url,
             });
           }

@@ -17,6 +17,11 @@ const UserSchema = new Schema(
       maxLength: [30, "Soyad en fazla 30 karakter olabilir!"],
       required: true,
     },
+    avatar: {
+      type: String,
+      default: "default_avatar.png",
+      required: true,
+    },
     email: {
       type: String,
       trim: true,
@@ -27,6 +32,7 @@ const UserSchema = new Schema(
     emailActive: {
       type: Boolean,
       default: false,
+      required: true,
     },
     password: {
       type: String,
@@ -36,6 +42,7 @@ const UserSchema = new Schema(
     isAdmin: {
       type: Boolean,
       default: false,
+      required: true,
     },
   },
   { collection: "users", timestamps: true, versionKey: false }

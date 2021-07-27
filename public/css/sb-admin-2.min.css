@@ -12627,25 +12627,19 @@ body.sidebar-toggled footer.sticky-footer {
     object-fit: cover
 }
 
-#img-section p,
-#deactivate p {
+#img-section p {
     font-size: 12px;
     color: #777;
     margin-bottom: 10px;
 }
 
 #img-section b,
-#img-section button,
-#deactivate b {
+#img-section button {
     font-size: 14px
 }
 
 @media(max-width:576px) {
     .wrapper {
         padding: 25px 20px
-    }
-
-    #deactivate {
-        line-height: 18px
     }
 }

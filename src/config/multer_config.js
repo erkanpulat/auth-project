@@ -13,11 +13,12 @@ const imageStorage = multer.diskStorage({
 });
 
 const imageFileFilter = (req, file, cb) => {
-  if (file.mimetype == "image/jpeg" || file.mimetype == "image/png") {
-    cb(null, true);
-  } else {
-    cb(null, false);
+  if (!(file.mimetype == "image/jpeg" || file.mimetype == "image/png")) {
+    // error message
+    req.file_error = "Sadece .png ve .jpeg uzantılı resim yükleyebilirsiniz.";
+    return cb(null, false);
   }
+  return cb(null, true);
 };
 
 const imageUpload = multer({
@@ -25,4 +26,4 @@ const imageUpload = multer({
   fileFilter: imageFileFilter,
 });
 
-module.exports = {imageUpload};
+module.exports = { imageUpload };
