@@ -38,8 +38,12 @@ router.get(
 // admin profile update
 router.post(
   "/profile",
-  multerConfig.imageUpload.single("avatar"),
-  validatorMiddleware.validateFullName(),
+  [
+    authMiddleware.loggedIn,
+    authMiddleware.isAdmin,
+    multerConfig.imageUpload.single("avatar"),
+    validatorMiddleware.validateFullName(),
+  ],
   adminController.profileUpdate
 );
 

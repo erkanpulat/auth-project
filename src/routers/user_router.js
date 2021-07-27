@@ -7,8 +7,7 @@ const authMiddleware = require("../middlewares/auth_middleware");
 // user home page
 router.get(
   "/home",
-  authMiddleware.loggedIn,
-  authMiddleware.isUser,
+  [authMiddleware.loggedIn, authMiddleware.isUser],
   userController.getHomePage
 );
 

@@ -10,7 +10,7 @@ router.get("/login", authMiddleware.notLoggedIn, authController.getLoginPage);
 
 router.post(
   "/login",
-  validatorMiddleware.validateLoginUser(),
+  [authMiddleware.notLoggedIn, validatorMiddleware.validateLoginUser()],
   authController.login
 );
 
@@ -26,7 +26,7 @@ router.get(
 
 router.post(
   "/register",
-  validatorMiddleware.validateNewUser(),
+  [authMiddleware.notLoggedIn, validatorMiddleware.validateNewUser()],
   authController.register
 );
 
@@ -39,7 +39,7 @@ router.get(
 
 router.post(
   "/forget-password",
-  validatorMiddleware.validateEmail(),
+  [authMiddleware.notLoggedIn, validatorMiddleware.validateEmail()],
   authController.fPassword
 );
 
@@ -52,11 +52,11 @@ router.get(
 
 router.post(
   "/reset-password",
-  validatorMiddleware.validatePassword(),
+  [authMiddleware.notLoggedIn, validatorMiddleware.validatePassword()],
   authController.rPassword
 );
 
 // verify email
-router.get("/verify", authController.verifyMail);
+router.get("/verify", authMiddleware.notLoggedIn, authController.verifyMail);
 
 module.exports = router;
