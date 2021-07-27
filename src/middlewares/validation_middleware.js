@@ -5,6 +5,8 @@ const validateNewUser = () => {
   return [
     body("firstName")
       .trim()
+      .isAlpha("tr-TR", { ignore: "s" })
+      .withMessage("İsim sadece harf içermelidir.")
       .isLength({ min: 2 })
       .withMessage("İsim en az 2 karakter olmalıdır.")
       .isLength({ max: 30 })
@@ -12,6 +14,8 @@ const validateNewUser = () => {
 
     body("lastName")
       .trim()
+      .isAlpha("tr-TR", { ignore: "s" })
+      .withMessage("Soyad sadece harf içermelidir.")
       .isLength({ min: 2 })
       .withMessage("Soyad en az 2 karakter olmalıdır.")
       .isLength({ max: 30 })
@@ -84,6 +88,8 @@ const validateFullName = () => {
   return [
     body("firstName")
       .trim()
+      .isAlpha("tr-TR", { ignore: "s" })
+      .withMessage("İsim sadece harf içermelidir.")
       .isLength({ min: 2 })
       .withMessage("İsim en az 2 karakter olmalıdır.")
       .isLength({ max: 30 })
@@ -91,6 +97,8 @@ const validateFullName = () => {
 
     body("lastName")
       .trim()
+      .isAlpha("tr-TR", { ignore: "s" })
+      .withMessage("Soyad sadece harf içermelidir.")
       .isLength({ min: 2 })
       .withMessage("Soyad en az 2 karakter olmalıdır.")
       .isLength({ max: 30 })

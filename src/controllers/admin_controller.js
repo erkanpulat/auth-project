@@ -106,7 +106,6 @@ const deleteUser = async (req, res, next) => {
 
 // admin profile page
 const getProfilePage = async (req, res, next) => {
-  console.log(JSON.parse(JSON.stringify(req.user)));
   res.render("pages/admin/profile", {
     layout: "admin/home_layout",
     user: JSON.parse(JSON.stringify(req.user)), // copy object

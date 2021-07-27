@@ -4,6 +4,8 @@ const adminController = require("../controllers/admin_controller");
 // middlewares
 const authMiddleware = require("../middlewares/auth_middleware"); // middlewares
 const validatorMiddleware = require("../middlewares/validation_middleware");
+// config
+const multerConfig = require("../config/multer_config");
 
 // admin home page
 router.get(
@@ -36,6 +38,7 @@ router.get(
 // admin profile update
 router.post(
   "/profile",
+  multerConfig.imageUpload.single("avatar"),
   validatorMiddleware.validateFullName(),
   adminController.profileUpdate
 );
